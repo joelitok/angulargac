@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { catchError, map, Observable, of, startWith } from 'rxjs';
+import { catchError, map, Observable, of, startWith ,filter} from 'rxjs';
 import { WorkUnit } from 'src/app/model/workunit.model';
 import { WorkunitService } from 'src/app/services/workunit.service';
 import { AppDataState, DataStateEnum } from 'src/app/state/workunit.model';
@@ -12,9 +12,11 @@ import { AppDataState, DataStateEnum } from 'src/app/state/workunit.model';
   styleUrls: ['./workunit.component.css']
 })
 export class WorkunitComponent implements OnInit {
-  
+  public selectedElement:string ='';
   //variable to new form nav
   panelNum:any=1;
+  public work:any;
+  public status:string='';
   
   //state manager of app
   workunits$:Observable<AppDataState<WorkUnit[]>> |null=null;
@@ -30,9 +32,9 @@ export class WorkunitComponent implements OnInit {
     private router:Router) { }
 
   ngOnInit(): void {
-    this.getAllWorkUnit();
-
-
+    //this.getAllWorkUnit();
+     
+     this.getAllWork();
     //init form
     this.employeFormGroup=this.fb.group({
 
@@ -100,13 +102,17 @@ next() {
 // end direction button
 
 //get all employees
- getAllWorkUnit(){
+
+getAllWorkUnit(){
+  console.log("premiere fonction");
  this.workunits$=this.workUnitService.getAllWorkUnit().pipe(
       map(data=>({dataState:DataStateEnum.LOADED, data:data})),
       startWith({dataState:DataStateEnum.LOADING}),
       catchError(err=>of({dataState:DataStateEnum.ERROR,errorMessage:err.message}))
-     
+    
   ) 
+
+
 
 
 console.log(this.workunits$);
@@ -114,6 +120,46 @@ console.log(this.workunits$);
 
 }
 
+
+valueSelected(){
+console.log("deuxieme fonction");
+ this.workunits$=this.workUnitService.getSelectedWorkUnit(this.selectedElement).pipe(
+  map(data=>({dataState:DataStateEnum.LOADED, data:data})),
+  startWith({dataState:DataStateEnum.LOADING}),
+  catchError(err=>of({dataState:DataStateEnum.ERROR,errorMessage:err.message}))
+)
+
+console.log(this.workunits$);
+
+}
+
+statusSelected(){
+  this.workunits$=this.workUnitService.getSelectedWorkUnit(this.status).pipe(
+    map(data=>({dataState:DataStateEnum.LOADED, data:data})),
+    startWith({dataState:DataStateEnum.LOADING}),
+    catchError(err=>of({dataState:DataStateEnum.ERROR,errorMessage:err.message}))
+  )
+}
+
+
+getAllWork(){
+if(this.selectedElement){
+this.valueSelected()
+}else if(this.status){
+this.statusSelected()  
+}else{
+this.getAllWorkUnit()
+  }
+}
+
+/*valueSelected(){
+  console.log("deuxieme function")
+  this.work = this.workUnitService.getAllWorkUnit().pipe(
+    map( data => data.filter(da=>da.namelocation===this.selectedElement))
+  )
+
+  console.log(this.work);
+}*/
 
 onSaveNewWorkUnit(){
   this.workUnitService.registerWorkUnit(this.employeFormGroup?.value).subscribe(

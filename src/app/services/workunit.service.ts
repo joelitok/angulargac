@@ -19,6 +19,21 @@ export class WorkunitService {
     
   }
 
+  getSelectedWorkUnit(wU:any):Observable<WorkUnit[]>{
+    let host =environment.host;
+    return this.http.get<WorkUnit[]>(host+"/workunits?workSite_like="+wU);
+  }
+
+  getSelectedStatus(status:string):Observable<WorkUnit[]>{
+    let host =environment.host;
+    if(status=='active')
+    return this.http.get<WorkUnit[]>(host+"/workunits?rdocheck1="+true);
+    else
+    return this.http.get<WorkUnit[]>(host+"/workunits?rdocheck1="+false);
+  }
+
+
+
   //delete WorkUnit specify
   deleteWorkUnit(wk:WorkUnit):Observable<void>{
     let host= environment.host;

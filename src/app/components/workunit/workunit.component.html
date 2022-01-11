@@ -282,18 +282,18 @@
                 <div class="row mb-3"> 
                     <div class="col ml-5">Work Site
                         <br>
-                        <select class="form-control"> 
+                        <select [(ngModel)]="selectedElement" (change)="valueSelected()" class="form-control"> 
                          <option value="">All </option>
-                         <option value="">fd</option>
-                         <option value="">3Lorem ipsum</option>
+                         <option value="douala">douala</option>
+                         <option value="yaounde">yaounde</option>
                      </select>
                     </div>
                     <div class="col">Status
                      <br>
-                     <select class="form-control"> 
-                         <option value="">Active </option>
-                         <option value="">2Lorem ipsum</option>
-                         <option value="">3Lorem ipsum</option>
+                     <select class="form-control" [(ngModel)]="status" (change)="statusSelected()"> 
+                      <option value="">All </option>   
+                      <option value="active">Active </option>
+                         <option value="disable">Disable</option>
                      </select>
                  </div>
                  <div class="col">Flex 
@@ -324,7 +324,7 @@
                   </tr>
                 </thead>
                 <tbody  >
-                  <tr *ngFor="let workUnit of result.data orderBy:'asc'">
+                  <tr *ngFor="let workUnit of result.data,let i=index">
                     
                       <td>
                           {{workUnit.name}}
@@ -338,18 +338,21 @@
                     </td>
                     <td>
                       <span class="badge badge-dot mr-4">
-                        <i class="bg-success"></i> dddddddddd
+                        <i class="bg-success"></i>{{workUnit.staggerRdo}}
                       </span>
                     </td>
                     <td>
                     {{workUnit.activeUntil}}
                     </td>
-                    <td style="background-color: #F9EBEA">
+                    <td style="background-color: #F9EBEA" *ngIf="i%2==1">
                       
                         <span style="color: red; font-size: 20px;" class="fa fa-warning"> </span>
-                        teste
-                      
+                        Yes
                     </td>
+                    <td *ngIf="i%2==0">
+                      
+                    No
+                  </td>
                     <td class="text-right">
                       <div class="dropdown">
                         <a class="btn btn-sm btn-icon-only text-light" href="#" (click)="deleteWorkUnit(workUnit)" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
